@@ -13,7 +13,7 @@ namespace Day02
 
         public int Game { get; init; }
 
-        public IEnumerable<CubeDraw> Draws => ParseDraws();
+        public IEnumerable<CubeSet> Draws => ParseDraws();
 
         private (int, string) ParseGameAndDraws(string data)
         {
@@ -26,13 +26,13 @@ namespace Day02
             return (game, drawsData);
         }
 
-        private IEnumerable<CubeDraw> ParseDraws()
+        private IEnumerable<CubeSet> ParseDraws()
         {
             var rx = new Regex(@"(\d+)\s(\w+)", RegexOptions.Compiled);
 
             foreach (var drawData in data.Split(';'))
             {
-                var draw = new CubeDraw();
+                var draw = new CubeSet();
                 foreach (var colorData in drawData.Split(","))
                 {
                     var m = rx.Match(colorData);

@@ -7,8 +7,7 @@ int answer = 0;
 foreach (var line in lines)
 {
     var x = new CubeGame(line);
-    if (x.IsPossible(red: 12, green: 13, blue: 14))
-        answer += x.GameId;
+    answer += x.MinimumSet().Power;
 }
 
 Console.WriteLine("Answer: {0}", answer);
