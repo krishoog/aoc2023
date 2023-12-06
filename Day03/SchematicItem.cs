@@ -2,10 +2,12 @@
 {
     public class SchematicItem
     {
+        private readonly HashSet<SymbolSchematicItem> symbolNeighbors = [];
+
         public int X { get; set; }
         public int Y { get; set; }
         public int Width { get; set; }
-        public bool Marked { get; set; }
+        public HashSet<SymbolSchematicItem> SymbolNeighbors { get => symbolNeighbors; }
 
         public IEnumerable<(int, int)> GetNeighbors()
         {

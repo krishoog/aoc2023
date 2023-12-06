@@ -9,7 +9,8 @@ foreach (var line in lines)
     schematic.LoadRow(line);
 }
 
-schematic.MarkPartNumbers();
-int answer = schematic.PartNumbers.Sum(x => x.Value);
+schematic.LinkSymbolNeighbors();
+schematic.LinkSymbolNumberNeighbors();
+int answer = schematic.Gears.Sum(x => x.GearRatio);
 
 Console.WriteLine("Answer: {0}", answer);

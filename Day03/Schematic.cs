@@ -19,14 +19,13 @@ namespace Day03
         }
 
         public List<NumberSchematicItem> Numbers { get => numbers; }
-
-        public IEnumerable<NumberSchematicItem> PartNumbers { get => numbers.Where(x => x.Marked); }
-
+        public IEnumerable<NumberSchematicItem> PartNumbers { get => numbers.Where(x => x.IsPartNumber); }
+        public IEnumerable<SymbolSchematicItem> Gears { get => symbols.Where(x => x.IsGear); }
         public List<SymbolSchematicItem> Symbols { get => symbols; }
 
         public void LoadRow(string data)
         {
-            var rx = new Regex(@"^(\d+|\.+|[^\.\d]+)", RegexOptions.Compiled);
+            var rx = new Regex(@"^(\d+|\.+|[^\.\d])", RegexOptions.Compiled);
             int currentColumn = 0;
             while (data.Length > 0)
             {
@@ -45,7 +44,7 @@ namespace Day03
             currentRow++;
         }
 
-        public void MarkPartNumbers()
+        public void LinkSymbolNeighbors()
         {
             foreach (var symbol in symbols)
             {
@@ -53,7 +52,18 @@ namespace Day03
                 {
                     if (x < 0 || y < 0 || x >= width || y >= height)
                         continue;
-                    grid[y, x].Marked = true;
+                    grid[y, x].SymbolNeighbors.Add(symbol);
+                }
+            }
+        }
+
+        public void LinkSymbolNumberNeighbors()
+        {
+            foreach (var number in numbers)
+            {
+                foreach (var symbol in number.SymbolNeighbors)
+                {
+                    symbol.NumberNeighbors.Add(number);
                 }
             }
         }
@@ -71,7 +81,7 @@ namespace Day03
                     item = new VoidSchematicItem();
                     break;
                 default:
-                    symbols.Add(new SymbolSchematicItem());
+                    symbols.Add(new SymbolSchematicItem(itemValue));
                     item = symbols.Last();
                     break;
             }

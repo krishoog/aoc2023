@@ -28,10 +28,18 @@ namespace Day03.Tests
         }
 
         [Test]
-        public void TestMarkPartNumbers()
+        public void TestLinkSymbolNeighbors()
         {
-            schematic.MarkPartNumbers();
+            schematic.LinkSymbolNeighbors();
             Assert.That(schematic.PartNumbers.Sum(x => x.Value), Is.EqualTo(4361));
+        }
+
+        [Test]
+        public void TestLinkSymbolNumberNeighbors()
+        {
+            schematic.LinkSymbolNeighbors();
+            schematic.LinkSymbolNumberNeighbors();
+            Assert.That(schematic.Gears.Sum(x => x.GearRatio), Is.EqualTo(467835));
         }
     }
 }
