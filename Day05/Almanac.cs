@@ -2,7 +2,7 @@
 {
     public class Almanac
     {
-        private readonly List<long> seeds = [];
+        private readonly List<(long, long)> seedRanges = [];
         private readonly Mapper seedToSoil = new();
         private readonly Mapper soilToFertilizer = new();
         private readonly Mapper fertilizerToWater = new();
@@ -13,7 +13,11 @@
 
         public Almanac(IEnumerable<string> lines)
         {
-            seeds = SplitNumbers(lines.First().Split(": ")[1]).ToList();
+            foreach (var chunk in SplitNumbers(lines.First().Split(": ")[1]).Chunk(2))
+            {
+                seedRanges.Add((chunk[0], chunk[1]));
+            }
+
             Mapper? mapper = null;
             foreach (var line in lines)
             {
@@ -40,17 +44,26 @@
 
         public IEnumerable<long> GetLocations()
         {
-            foreach (var seed in seeds)
+            foreach (var (seedRangeStart, seedRangeLength) in seedRanges)
             {
-                yield return humidityToLocation.Map(
-                    temperatureToHumidity.Map(
-                        lightToTemperature.Map(
-                            waterToLight.Map(
-                                fertilizerToWater.Map(
-                                    soilToFertilizer.Map(
-                                        seedToSoil.Map(
-                                            seed)))))));
+                for (long i = 0; i < seedRangeLength; i++)
+                {
+                    var seed = seedRangeStart + i;
+                    yield return humidityToLocation.Map(
+                        temperatureToHumidity.Map(
+                            lightToTemperature.Map(
+                                waterToLight.Map(
+                                    fertilizerToWater.Map(
+                                        soilToFertilizer.Map(
+                                            seedToSoil.Map(
+                                                seed)))))));
+                }
             }
+        }
+
+        public long GetLowestLocation()
+        {
+            return GetLocations().Min();
         }
 
         private static IEnumerable<long> SplitNumbers(string numbers)

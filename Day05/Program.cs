@@ -5,5 +5,5 @@ var lines = File.ReadLines("input.txt");
 
 var almanac = new Almanac(lines);
 
-var answer = almanac.GetLocations().Min();
+var answer = almanac.GetLowestLocation();
 Console.WriteLine("Answer: {0}", answer);
