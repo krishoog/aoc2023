@@ -2,7 +2,7 @@
 {
     public class Almanac
     {
-        private readonly List<(long, long)> seedRanges = [];
+        private readonly List<Range> seedRanges = [];
         private readonly Mapper seedToSoil = new();
         private readonly Mapper soilToFertilizer = new();
         private readonly Mapper fertilizerToWater = new();
@@ -15,7 +15,7 @@
         {
             foreach (var chunk in SplitNumbers(lines.First().Split(": ")[1]).Chunk(2))
             {
-                seedRanges.Add((chunk[0], chunk[1]));
+                seedRanges.Add(new Range(chunk[0], chunk[1]));
             }
 
             Mapper? mapper = null;
@@ -42,28 +42,24 @@
             }
         }
 
-        public IEnumerable<long> GetLocations()
+        public IEnumerable<Range> GetLocations()
         {
-            foreach (var (seedRangeStart, seedRangeLength) in seedRanges)
+            foreach (var locationRange in humidityToLocation.Map(
+                    temperatureToHumidity.Map(
+                        lightToTemperature.Map(
+                            waterToLight.Map(
+                                fertilizerToWater.Map(
+                                    soilToFertilizer.Map(
+                                        seedToSoil.Map(
+                                            seedRanges))))))))
             {
-                for (long i = 0; i < seedRangeLength; i++)
-                {
-                    var seed = seedRangeStart + i;
-                    yield return humidityToLocation.Map(
-                        temperatureToHumidity.Map(
-                            lightToTemperature.Map(
-                                waterToLight.Map(
-                                    fertilizerToWater.Map(
-                                        soilToFertilizer.Map(
-                                            seedToSoil.Map(
-                                                seed)))))));
-                }
+                yield return locationRange;
             }
         }
 
         public long GetLowestLocation()
         {
-            return GetLocations().Min();
+            return GetLocations().Select(x => x.Start).Min();
         }
 
         private static IEnumerable<long> SplitNumbers(string numbers)

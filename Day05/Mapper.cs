@@ -2,24 +2,53 @@
 {
     public class Mapper
     {
-        // Key = Source Range Start, Value = (Destination Range Start, Range Length)
-        private readonly SortedDictionary<long, (long, long)> ranges = [];
+        // Key = Source Range Start, Value = Destination Range
+        private readonly SortedDictionary<long, Range> ranges = [];
 
         public void AddRange(long dstStart, long srcStart, long length)
         {
-            ranges[srcStart] = (dstStart, length);
+            ranges[srcStart] = new Range(dstStart, length);
         }
 
         public long Map(long source)
         {
-            if (ranges.Count == 0 || source < ranges.First().Key)
-                return source;
+            return FindDestinationRange(new Range(source, 1)).Start;
+        }
 
-            foreach (var (src, (dst, len)) in ranges)
+        public IEnumerable<Range> Map(Range source)
+        {
+            while (source.Length > 0)
             {
-                if (source >= src && source - src < len)
+                var range = FindDestinationRange(source);
+                range = range with { Length = Math.Min(source.Length, range.Length) };
+                source = source.Advance(range.Length);
+                yield return range;
+            }
+        }
+
+        public IEnumerable<Range> Map(IEnumerable<Range> sources)
+        {
+            foreach (var source in sources)
+            {
+                foreach (var range in Map(source))
                 {
-                    return dst + source - src;
+                    yield return range;
+                }
+            }
+        }
+
+        private Range FindDestinationRange(Range source)
+        {
+            if (ranges.Count == 0 || source.Start < ranges.First().Key)
+            {
+                return source with { Length = ranges.Count == 0 ? source.Length : ranges.First().Key - source.Start };
+            }
+
+            foreach (var (src, dstRange) in ranges)
+            {
+                if (source.Start >= src && source.Start - src < dstRange.Length)
+                {
+                    return dstRange.Advance(source.Start - src);
                 }
             }
 
