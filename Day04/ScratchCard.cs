@@ -7,11 +7,17 @@
             var numbers = data.Split(": ")[1].Split(" | ");
             var winning = SplitNumbers(numbers[0]).ToHashSet();
             var ours = SplitNumbers(numbers[1]);
-            var countOursWinning = ours.Where(winning.Contains).Count(); ;
-            Points = countOursWinning == 0 ? 0 : 1 << countOursWinning - 1;
+            MatchingNumbers = ours.Where(winning.Contains).Count(); ;
+            Points = MatchingNumbers == 0 ? 0 : 1 << MatchingNumbers - 1;
         }
 
         public int Points { get; init; }
+
+        public int MatchingNumbers { get; init; }
+
+        public int Copies { get; set; }
+
+        public int Instances { get => Copies + 1; }
 
         private static IEnumerable<int> SplitNumbers(string numbers)
         {

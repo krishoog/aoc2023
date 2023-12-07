@@ -3,11 +3,13 @@ using Day04;
 
 var lines = File.ReadLines("input.txt");
 
-int answer = 0;
+var pile = new Pile();
 foreach (var line in lines)
 {
-    var card = new ScratchCard(line);
-    answer += card.Points;
+    pile.AddCard(line);
 }
 
+pile.ScoreCards();
+
+var answer = pile.NumCards;
 Console.WriteLine("Answer: {0}", answer);
