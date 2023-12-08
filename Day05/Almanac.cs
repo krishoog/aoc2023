@@ -44,17 +44,14 @@
 
         public IEnumerable<Range> GetLocations()
         {
-            foreach (var locationRange in humidityToLocation.Map(
+            return humidityToLocation.Map(
                     temperatureToHumidity.Map(
                         lightToTemperature.Map(
                             waterToLight.Map(
                                 fertilizerToWater.Map(
                                     soilToFertilizer.Map(
                                         seedToSoil.Map(
-                                            seedRanges))))))))
-            {
-                yield return locationRange;
-            }
+                                            seedRanges)))))));
         }
 
         public long GetLowestLocation()
