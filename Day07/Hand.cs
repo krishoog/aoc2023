@@ -30,34 +30,11 @@ namespace Day07
             {
                 var sortedData = SortData();
 
-                var rxSameCards = new Regex(@"([^J])\1+");
-                var counts = new int[6];
-                foreach (Match m in rxSameCards.Matches(sortedData))
-                {
-                    counts[m.Length]++;
-                }
+                int[] counts = CountCards(sortedData);
+                int jokers = CountJokers(sortedData);
 
-                var rxJokers = new Regex(@"[J]+");
-                var jokers = rxJokers.Match(sortedData).Length;
                 // Use every joker to make it a better set
-                for (int i = 0; i < jokers; i++)
-                {
-                    var used = false;
-                    for (int j = 5; !used && j >= 2; j--)
-                    {
-                        if (counts[j - 1] > 0)
-                        {
-                            counts[j]++;
-                            counts[j - 1]--;
-                            used = true;
-                        }
-                    }
-
-                    if (!used)
-                    {
-                        counts[2]++;
-                    }
-                }
+                UseJokersOnCounts(counts, jokers);
 
                 if (counts[5] > 0)
                     return HandType.FiveOfAKind;
@@ -86,6 +63,48 @@ namespace Day07
                 'T' => 10,
                 _ => int.Parse(data.Substring(index, 1)),
             };
+        }
+
+        private static int[] CountCards(string sortedData)
+        {
+            var rxSameCards = new Regex(@"([^J])\1+");
+            var counts = new int[6];
+            foreach (Match m in rxSameCards.Matches(sortedData))
+            {
+                counts[m.Length]++;
+            }
+
+            return counts;
+        }
+
+        private static int CountJokers(string sortedData)
+        {
+            var rxJokers = new Regex(@"[J]+");
+            var jokers = rxJokers.Match(sortedData).Length;
+            
+            return jokers;
+        }
+
+        private static void UseJokersOnCounts(int[] counts, int jokers)
+        {
+            for (int i = 0; i < jokers; i++)
+            {
+                var used = false;
+                for (int j = 5; !used && j >= 2; j--)
+                {
+                    if (counts[j - 1] > 0)
+                    {
+                        counts[j]++;
+                        counts[j - 1]--;
+                        used = true;
+                    }
+                }
+
+                if (!used)
+                {
+                    counts[2]++;
+                }
+            }
         }
 
         private string SortData()
