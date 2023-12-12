@@ -3,10 +3,10 @@ namespace Day07.Tests
     public class TestHand
     {
         [TestCase("32T3K", ExpectedResult = HandType.OnePair)]
-        [TestCase("T55J5", ExpectedResult = HandType.ThreeOfAKind)]
+        [TestCase("T55J5", ExpectedResult = HandType.FourOfAKind)]
         [TestCase("KK677", ExpectedResult = HandType.TwoPair)]
-        [TestCase("KTJJT", ExpectedResult = HandType.TwoPair)]
-        [TestCase("QQQJA", ExpectedResult = HandType.ThreeOfAKind)]
+        [TestCase("KTJJT", ExpectedResult = HandType.FourOfAKind)]
+        [TestCase("QQQJA", ExpectedResult = HandType.FourOfAKind)]
         [TestCase("AAAAA", ExpectedResult = HandType.FiveOfAKind)]
         [TestCase("AA8AA", ExpectedResult = HandType.FourOfAKind)]
         [TestCase("23332", ExpectedResult = HandType.FullHouse)]
@@ -15,6 +15,7 @@ namespace Day07.Tests
         [TestCase("23432", ExpectedResult = HandType.TwoPair)]
         [TestCase("A23A4", ExpectedResult = HandType.OnePair)]
         [TestCase("23456", ExpectedResult = HandType.HighCard)]
+        [TestCase("2345J", ExpectedResult = HandType.OnePair)]
         public HandType TestType(string data)
         {
             var x = new Hand(data);
@@ -35,6 +36,7 @@ namespace Day07.Tests
         [TestCase("23432", 0, ExpectedResult = 2)]
         [TestCase("A23A4", 0, ExpectedResult = 14)]
         [TestCase("23456", 0, ExpectedResult = 2)]
+        [TestCase("J3456", 0, ExpectedResult = 1)]
         public int TestHighCard(string data, int index)
         {
             var x = new Hand(data);

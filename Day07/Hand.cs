@@ -28,25 +28,50 @@ namespace Day07
         {
             get
             {
-                var rx5K = new Regex(@"(.)\1{4}");
-                var rx4K = new Regex(@"(.)\1{3}");
-                var rxFH1 = new Regex(@"(.)\1{2}(.)\2{1}");
-                var rxFH2 = new Regex(@"(.)\1{1}(.)\2{2}");
-                var rx3K = new Regex(@"(.)\1{2}");
-                var rx2P = new Regex(@"(.)\1.?(.)\2");
-                var rx1P = new Regex(@"(.)\1");
+                var sortedData = SortData();
 
-                return SortData() switch
+                var rxSameCards = new Regex(@"([^J])\1+");
+                var counts = new int[6];
+                foreach (Match m in rxSameCards.Matches(sortedData))
                 {
-                    var x when rx5K.IsMatch(x) => HandType.FiveOfAKind,
-                    var x when rx4K.IsMatch(x) => HandType.FourOfAKind,
-                    var x when rxFH1.IsMatch(x) => HandType.FullHouse,
-                    var x when rxFH2.IsMatch(x) => HandType.FullHouse,
-                    var x when rx3K.IsMatch(x) => HandType.ThreeOfAKind,
-                    var x when rx2P.IsMatch(x) => HandType.TwoPair,
-                    var x when rx1P.IsMatch(x) => HandType.OnePair,
-                    _ => HandType.HighCard,
-                };
+                    counts[m.Length]++;
+                }
+
+                var rxJokers = new Regex(@"[J]+");
+                var jokers = rxJokers.Match(sortedData).Length;
+                // Use every joker to make it a better set
+                for (int i = 0; i < jokers; i++)
+                {
+                    var used = false;
+                    for (int j = 5; !used && j >= 2; j--)
+                    {
+                        if (counts[j - 1] > 0)
+                        {
+                            counts[j]++;
+                            counts[j - 1]--;
+                            used = true;
+                        }
+                    }
+
+                    if (!used)
+                    {
+                        counts[2]++;
+                    }
+                }
+
+                if (counts[5] > 0)
+                    return HandType.FiveOfAKind;
+                if (counts[4] > 0)
+                    return HandType.FourOfAKind;
+                if (counts[3] > 0 && counts[2] > 0)
+                    return HandType.FullHouse;
+                if (counts[3] > 0)
+                    return HandType.ThreeOfAKind;
+                if (counts[2] >= 2)
+                    return HandType.TwoPair;
+                if (counts[2] > 0)
+                    return HandType.OnePair;
+                return HandType.HighCard;
             }
         }
 
@@ -57,7 +82,7 @@ namespace Day07
                 'A' => 14,
                 'K' => 13,
                 'Q' => 12,
-                'J' => 11,
+                'J' => 1, // 11 when not joker
                 'T' => 10,
                 _ => int.Parse(data.Substring(index, 1)),
             };
