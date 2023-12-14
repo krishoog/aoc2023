@@ -11,5 +11,5 @@ foreach (var line in lines.Skip(2))
     map.AddNode(line);
 }
 
-var answer = map.Traverse();
+var answer = map.MultipathTraverse();
 Console.WriteLine("Answer: {0}", answer);

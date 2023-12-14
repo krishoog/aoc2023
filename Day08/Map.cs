@@ -9,6 +9,8 @@ namespace Day08
         private readonly Dictionary<string, Node> nodes = [];
         private const string firstNode = "AAA";
         private const string lastNode = "ZZZ";
+        private const string multipathFirstNodeEnding = "A";
+        private const string multipathLastNodeEnding = "Z";
         private string? directions;
 
         public void AddDirections(string directions)
@@ -42,6 +44,33 @@ namespace Day08
                 else
                 {
                     currentNode = nodes[currentNode].left;
+                }
+
+                steps++;
+            }
+
+            return steps;
+        }
+
+        public int MultipathTraverse()
+        {
+            var currentNodes = nodes.Where(x => x.Key.EndsWith(multipathFirstNodeEnding)).Select(x => x.Key).ToArray();
+            var steps = 0;
+            while (!currentNodes.All(x => x.EndsWith(multipathLastNodeEnding)))
+            {
+                if (directions[steps % directions.Length] == 'R')
+                {
+                    for (int i = 0; i < currentNodes.Length; i++)
+                    {
+                        currentNodes[i] = nodes[currentNodes[i]].right;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < currentNodes.Length; i++)
+                    {
+                        currentNodes[i] = nodes[currentNodes[i]].left;
+                    }
                 }
 
                 steps++;

@@ -3,7 +3,7 @@ namespace Day08.Tests
     public class TestMap
     {
         [Test]
-        public void Test1()
+        public void TestTraverse1()
         {
             var x = new Map();
             x.AddDirections("RL");
@@ -19,7 +19,7 @@ namespace Day08.Tests
         }
 
         [Test]
-        public void Test2()
+        public void TestTraverse2()
         {
             var x = new Map();
             x.AddDirections("LLR");
@@ -28,6 +28,23 @@ namespace Day08.Tests
             x.AddNode("ZZZ = (ZZZ, ZZZ)");
 
             Assert.That(x.Traverse(), Is.EqualTo(6));
+        }
+
+        [Test]
+        public void TestMultipathTraverse()
+        {
+            var x = new Map();
+            x.AddDirections("LR");
+            x.AddNode("11A = (11B, XXX)");
+            x.AddNode("11B = (XXX, 11Z)");
+            x.AddNode("11Z = (11B, XXX)");
+            x.AddNode("22A = (22B, XXX)");
+            x.AddNode("22B = (22C, 22C)");
+            x.AddNode("22C = (22Z, 22Z)");
+            x.AddNode("22Z = (22B, 22B)");
+            x.AddNode("XXX = (XXX, XXX)");
+
+            Assert.That(x.MultipathTraverse(), Is.EqualTo(6));
         }
     }
 }
