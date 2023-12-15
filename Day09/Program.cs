@@ -7,7 +7,7 @@ var extrapolator = new Extrapolator();
 var answer = 0;
 foreach (var line in lines)
 {
-    answer += extrapolator.Extrapolate(line);
+    answer += extrapolator.ExtrapolateBack(line);
 }
 
 Console.WriteLine("Answer: {0}", answer);

@@ -17,7 +17,21 @@ namespace Day09
             return sequence.Last() + Extrapolate(d);
         }
 
-        public IEnumerable<int> Differentiate(IEnumerable<int> input)
+        public int ExtrapolateBack(string line)
+        {
+            return ExtrapolateBack(line.Split(" ").Select(int.Parse));
+        }
+
+        public int ExtrapolateBack(IEnumerable<int> sequence)
+        {
+            var d = Differentiate(sequence);
+            if (d.All(x => x == 0))
+                return sequence.First();
+
+            return sequence.First() - ExtrapolateBack(d);
+        }
+
+        private IEnumerable<int> Differentiate(IEnumerable<int> input)
         {
             var list = input.ToList();
             for (int i = 0; i < list.Count - 1; i++)
