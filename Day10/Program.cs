@@ -4,6 +4,7 @@ using Day10;
 var lines = File.ReadLines("input.txt");
 
 var maze = new Maze(lines);
-var answer = maze.FindLoopLength() / 2;
+maze.FindLoop();
+var answer = maze.CountEnclosed();
 
 Console.WriteLine("Answer: {0}", answer);
