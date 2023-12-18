@@ -2,7 +2,7 @@
 using Day11;
 
 var lines = File.ReadLines("input.txt");
-var universe = new UniverseMap(lines);
+var universe = new UniverseMap(lines, 1000000);
 
 var answer = universe.CalculteShortesPaths().Sum(); ;
 Console.WriteLine("Answer: {0}", answer);

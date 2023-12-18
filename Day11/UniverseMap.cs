@@ -9,26 +9,26 @@
             public int ObservedY { get; init; }
             public bool ExpandedX { get; set; }
             public bool ExpandedY { get; set; }
-            public int RealX { get; set; }
-            public int RealY { get; set; }
-            public int RealWidth { get => ExpandedX ? 2 : 1; }
-            public int RealHeight { get => ExpandedY ? 2 : 1; }
+            public long RealX { get; set; }
+            public long RealY { get; set; }
         }
 
         private readonly List<Cell> map = [];
         private readonly int mapWidth;
         private readonly int mapHeight;
+        private readonly int expansionFactor;
 
-        public UniverseMap(IEnumerable<string> data)
+        public UniverseMap(IEnumerable<string> data, int expansionFactor)
         {
             (mapWidth, mapHeight) = LoadData(data);
+            this.expansionFactor = expansionFactor;
 
             ExpandInX();
             ExpandInY();
             CalculateRealCoords();
         }
 
-        public IEnumerable<int> CalculteShortesPaths()
+        public IEnumerable<long> CalculteShortesPaths()
         {
             var galaxies = map.Where(c => c.Type == '#').ToList();
             for (int i = 0; i < galaxies.Count; i++)
@@ -94,9 +94,9 @@
 
         private void CalculateRealCoords()
         {
-            var realX = 0;
-            var realY = 0;
-            var lastRealHeight = 0;
+            long realX = 0;
+            long realY = 0;
+            long lastRealHeight = 0;
             foreach (var cell in map)
             {
                 if (cell.ObservedX == 0)
@@ -108,8 +108,8 @@
                 cell.RealX = realX;
                 cell.RealY = realY;
 
-                realX += cell.RealWidth;
-                lastRealHeight = cell.RealHeight;
+                realX += cell.ExpandedX ? expansionFactor : 1;
+                lastRealHeight = cell.ExpandedY ? expansionFactor : 1;
             }
         }
     }
