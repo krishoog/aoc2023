@@ -2,6 +2,8 @@
 {
     public class ArrangementCalculator
     {
+        private readonly int fold;
+
         private class Spring
         {
             public char Condition { get; init; }
@@ -51,19 +53,40 @@
             }
         }
 
+        public ArrangementCalculator(int fold)
+        {
+            this.fold = fold;
+        }
+
         public int CalculateArrangements(string data)
         {
             var split = data.Split(" ");
-
-            var springs = split[0].Select(x => new Spring() { Condition = x }).ToList();
-            for (int i = 1; i < springs.Count; i++)
+            var springs = Unfold(CreateSprings(split[0] + "?")).ToList();
+            for (int i = 1; i < springs.Count - 1; i++)
             {
                 springs[i - 1].Neighbor = springs[i];
             }
 
-            var groups = split[1].Split(",").Select(int.Parse).ToArray();
+            var groups = Unfold(CreateGroups(split[1])).ToArray();
 
             return springs[0].CountPaths(groups);
+        }
+
+        private IEnumerable<T> Unfold<T>(IEnumerable<T> input)
+        {
+            for (int i = 0; i < fold; i++)
+                foreach (var x in input)
+                    yield return x;
+        }
+
+        private static IEnumerable<Spring> CreateSprings(string conditions)
+        {
+            return conditions.Select(x => new Spring() { Condition = x });
+        }
+
+        private static IEnumerable<int> CreateGroups(string groups)
+        {
+            return groups.Split(",").Select(int.Parse);
         }
     }
 }
