@@ -6,20 +6,33 @@
 
         private class Spring
         {
+            private readonly Dictionary<(int, char), long> cache = [];
             public char Condition { get; init; }
             public Spring? Neighbor { get; set; }
 
-            public int CountPaths(int[] groups, char previousCondition = '.')
+            public long CountPaths(int[] groups, char previousCondition = '.')
             {
-                if (Condition == '?')
+                int remaining = groups.Sum();
+                if (cache.TryGetValue((remaining, previousCondition), out long paths))
                 {
-                    return CountPaths('.', groups, previousCondition) + CountPaths('#', groups, previousCondition);
+                    return paths;
                 }
 
-                return CountPaths(Condition, groups, previousCondition);
+                if (Condition == '?')
+                {
+                    paths = CountPaths('.', groups, previousCondition) + CountPaths('#', groups, previousCondition);
+                }
+                else
+                {
+                    paths = CountPaths(Condition, groups, previousCondition);
+                }
+
+                cache.Add((remaining, previousCondition), paths);
+
+                return paths;
             }
 
-            public int CountPaths(char condition, int[] groups, char previousCondition)
+            public long CountPaths(char condition, int[] groups, char previousCondition)
             {
                 if (condition == '#')
                 {
@@ -58,7 +71,7 @@
             this.fold = fold;
         }
 
-        public int CalculateArrangements(string data)
+        public long CalculateArrangements(string data)
         {
             var split = data.Split(" ");
             var springs = Unfold(CreateSprings(split[0] + "?")).ToList();
