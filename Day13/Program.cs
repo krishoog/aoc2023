@@ -6,7 +6,7 @@ var lines = File.ReadLines("input.txt");
 var answer = 0;
 bool end = false;
 var skip = 0;
-var finder = new ReflectionFinder();
+var finder = new ReflectionFinder(1);
 while (!end)
 {
     var input = lines.Skip(skip).TakeWhile(x => x.Length != 0).ToArray();
